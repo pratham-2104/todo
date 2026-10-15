@@ -2,6 +2,7 @@ package com.dyventech.todo.service;
 
 import com.dyventech.todo.dto.CreateTodoRequest;
 import com.dyventech.todo.dto.TodoResponse;
+import com.dyventech.todo.dto.TodoStatsResponse;
 import com.dyventech.todo.dto.UpdateTodoRequest;
 import com.dyventech.todo.entity.Todo;
 import com.dyventech.todo.exception.TodoNotFoundException;
@@ -45,14 +46,26 @@ class TodoServiceTest {
 
     @Test
     void testGetAllWithoutFilter() {
-        when(todoRepository.listAll()).thenReturn(List.of(sampleTodo));
+        when(todoRepository.listAllSorted()).thenReturn(List.of(sampleTodo));
 
         List<TodoResponse> result = todoService.getAll(null);
 
         assertEquals(1, result.size());
         assertEquals("Buy milk", result.get(0).title());
-        verify(todoRepository).listAll();
+        verify(todoRepository).listAllSorted();
         verify(todoRepository, never()).findByCompleted(anyBoolean());
+    }
+
+    @Test
+    void testGetStats() {
+        when(todoRepository.count()).thenReturn(10L);
+        when(todoRepository.countCompleted()).thenReturn(4L);
+
+        TodoStatsResponse stats = todoService.getStats();
+
+        assertEquals(10L, stats.total());
+        assertEquals(4L, stats.completed());
+        assertEquals(6L, stats.pending());
     }
 
     @Test
