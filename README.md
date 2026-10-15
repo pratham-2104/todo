@@ -52,6 +52,7 @@ Base URL: `http://localhost:8080/api/todos`
 |---|---|---|---|
 | `POST` | `/api/todos` | Create a new todo | `201 Created` |
 | `GET` | `/api/todos` | Get all todos (optional `?completed=true/false`) | `200 OK` |
+| `GET` | `/api/todos/stats` | Get summary counts (total, completed, pending) | `200 OK` |
 | `GET` | `/api/todos/{id}` | Get todo by ID | `200 OK` / `404 Not Found` |
 | `PUT` | `/api/todos/{id}` | Update title, description, and status | `200 OK` / `404 Not Found` |
 | `DELETE` | `/api/todos/{id}` | Delete a todo | `204 No Content` / `404 Not Found` |

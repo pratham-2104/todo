@@ -2,6 +2,7 @@ package com.dyventech.todo.resource;
 
 import com.dyventech.todo.dto.CreateTodoRequest;
 import com.dyventech.todo.dto.TodoResponse;
+import com.dyventech.todo.dto.TodoStatsResponse;
 import com.dyventech.todo.dto.UpdateTodoRequest;
 import com.dyventech.todo.service.TodoService;
 import jakarta.inject.Inject;
@@ -32,6 +33,12 @@ public class TodoResource {
     @GET
     public List<TodoResponse> getAll(@QueryParam("completed") Boolean completed) {
         return todoService.getAll(completed);
+    }
+
+    @GET
+    @Path("/stats")
+    public TodoStatsResponse getStats() {
+        return todoService.getStats();
     }
 
     @GET

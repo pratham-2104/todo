@@ -2,6 +2,7 @@ package com.dyventech.todo.service;
 
 import com.dyventech.todo.dto.CreateTodoRequest;
 import com.dyventech.todo.dto.TodoResponse;
+import com.dyventech.todo.dto.TodoStatsResponse;
 import com.dyventech.todo.dto.UpdateTodoRequest;
 import com.dyventech.todo.entity.Todo;
 import com.dyventech.todo.exception.TodoNotFoundException;
@@ -23,11 +24,18 @@ public class TodoService {
         if (completed != null) {
             todos = todoRepository.findByCompleted(completed);
         } else {
-            todos = todoRepository.listAll();
+            todos = todoRepository.listAllSorted();
         }
         return todos.stream()
             .map(TodoResponse::fromEntity)
             .toList();
+    }
+
+    public TodoStatsResponse getStats() {
+        long total = todoRepository.count();
+        long completed = todoRepository.countCompleted();
+        long pending = total - completed;
+        return new TodoStatsResponse(total, completed, pending);
     }
 
     public TodoResponse getById(Long id) {

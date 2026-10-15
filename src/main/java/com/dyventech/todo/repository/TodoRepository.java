@@ -10,6 +10,14 @@ import java.util.List;
 public class TodoRepository implements PanacheRepository<Todo> {
 
     public List<Todo> findByCompleted(boolean completed) {
-        return list("completed", completed);
+        return list("completed = ?1 order by createdAt desc", completed);
+    }
+
+    public List<Todo> listAllSorted() {
+        return list("order by createdAt desc");
+    }
+
+    public long countCompleted() {
+        return count("completed", true);
     }
 }
