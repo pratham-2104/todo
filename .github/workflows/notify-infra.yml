@@ -1,0 +1,44 @@
+name: Notify Infra of New Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-infra-pr:
+    name: Open PR on todoinfra
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract Tag Name
+        id: get_tag
+        run: echo "TAG_NAME=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Checkout todoinfra Repository
+        uses: actions/checkout@v4
+        with:
+          repository: pratham-2104/todoinfra
+          token: ${{ secrets.INFRA_REPO_PAT }}
+          path: todoinfra
+
+      - name: Update Version in todoinfra
+        working-directory: todoinfra
+        run: |
+          echo "${{ steps.get_tag.outputs.TAG_NAME }}" > version.txt
+
+      - name: Create Pull Request in todoinfra
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.INFRA_REPO_PAT }}
+          path: todoinfra
+          branch: update-tag-${{ steps.get_tag.outputs.TAG_NAME }}
+          base: main
+          title: "chore(release): bump todo to ${{ steps.get_tag.outputs.TAG_NAME }}"
+          body: |
+            Automated Pull Request from `todo` repository.
+
+            **New Release Tag**: `${{ steps.get_tag.outputs.TAG_NAME }}`
+            **Triggered By**: @${{ github.actor }}
+          commit-message: "chore: update todo tag to ${{ steps.get_tag.outputs.TAG_NAME }}"
+          delete-branch: true
